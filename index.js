@@ -3,12 +3,19 @@ const connectDB = require('./src/config/db');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const routes = require('./src/routes/routes');
+const requestLogger = require('./src/config/logger')
+const cors = require('cors');
 require('dotenv').config();
 
 const app = express();
 
-// Middlewares
+app.use(cors({
+  origin: "*",
+}))
+
+// Middleware
 app.use(bodyParser.json());
+app.use(requestLogger);
 app.use(cookieParser());
 
 // Database Connection
