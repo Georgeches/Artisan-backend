@@ -5,7 +5,7 @@ const Artisan = require('../models/artisanModel');
 const Customer = require('../models/customerModel');
 
 const generateToken = (userId) => {
-  return jwt.sign({ userId }, 'your-secret-key', { expiresIn: '1h' });
+  return jwt.sign({ userId }, 'secret-key', { expiresIn: '1h' });
 };
 
 // Login for Artisans
