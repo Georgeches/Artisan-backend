@@ -10,6 +10,7 @@ router.post('/auth/customer/login', authController.loginCustomer);
 // Artisan Routes
 router.get('/artisans', artisanController.getAllArtisans);
 router.get('/artisans/:id', artisanController.getArtisanById);
+router.post('/artisans', artisanController.createArtisan);
 
 // Customer Routes
 router.get('/customers', customerController.getAllCustomers);

@@ -15,13 +15,13 @@ exports.loginArtisan = async (req, res) => {
     const artisan = await Artisan.findOne({ email });
 
     if (!artisan) {
-      return res.status(401).json({ message: 'Invalid credentials' });
+      return res.status(401).json({ message: 'Invalid email' });
     }
 
     const isPasswordValid = await bcrypt.compare(password, artisan.password);
 
     if (!isPasswordValid) {
-      return res.status(401).json({ message: 'Invalid credentials' });
+      return res.status(401).json({ message: 'Invalid password' });
     }
 
     const token = generateToken(artisan._id);
