@@ -2,12 +2,14 @@ const express = require('express');
 const connectDB = require('./src/config/db');
 const bodyParser = require('body-parser');
 const routes = require('./src/routes/routes');
+const requestLogger = require('./src/config/logger')
 require('dotenv').config();
 
 const app = express();
 
 // Middleware
 app.use(bodyParser.json());
+app.use(requestLogger);
 
 // Database Connection
 connectDB();
