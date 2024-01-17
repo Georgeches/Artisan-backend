@@ -1,4 +1,26 @@
 const Customer = require('../models/customerModel');
+const bcrypt = require('bcrypt');
+
+const hashPassword = async (password) => {
+  const hashedPassword = await bcrypt.hash(password, 10);
+  return hashedPassword;
+};
+
+exports.createCustomer = async (req, res) => {
+  try {
+    //console.log(req.body);
+    const { name, email, password } = req.body;
+    const hashedPassword = await hashPassword(password);
+      
+   const artisan = new Customer({ name, email, password:hashedPassword });
+    await artisan.save();
+    res.status(201).json(artisan);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+}
+
 
 exports.getAllCustomers = async (req, res) => {
   try {

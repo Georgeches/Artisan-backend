@@ -1,6 +1,7 @@
 const express = require('express');
 const connectDB = require('./src/config/db');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 const routes = require('./src/routes/routes');
 const requestLogger = require('./src/config/logger')
 const cors = require('cors');
@@ -15,6 +16,7 @@ app.use(cors({
 // Middleware
 app.use(bodyParser.json());
 app.use(requestLogger);
+app.use(cookieParser());
 
 // Database Connection
 connectDB();
