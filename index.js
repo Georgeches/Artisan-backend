@@ -3,9 +3,14 @@ const connectDB = require('./src/config/db');
 const bodyParser = require('body-parser');
 const routes = require('./src/routes/routes');
 const requestLogger = require('./src/config/logger')
+const cors = require('cors');
 require('dotenv').config();
 
 const app = express();
+
+app.use(cors({
+  origin: "*",
+}))
 
 // Middleware
 app.use(bodyParser.json());
