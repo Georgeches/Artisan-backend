@@ -1,9 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/authController');
-const artisanController = require('../controllers/artisanController'); // <-- Adjust path if needed
-const customerController = require('../controllers/customerController'); // <-- Adjust path if needed
-
+const artisanController = require('../controllers/artisanController'); 
+const customerController = require('../controllers/customerController'); 
 // Authentication Routes
 router.post('/auth/artisan/login', authController.loginArtisan);
 router.post('/auth/customer/login', authController.loginCustomer);
