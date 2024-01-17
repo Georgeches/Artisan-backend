@@ -1,13 +1,15 @@
 const express = require('express');
 const connectDB = require('./src/config/db');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 const routes = require('./src/routes/routes');
 require('dotenv').config();
 
 const app = express();
 
-// Middleware
+// Middlewares
 app.use(bodyParser.json());
+app.use(cookieParser());
 
 // Database Connection
 connectDB();
