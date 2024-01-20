@@ -5,7 +5,6 @@ const hashPassword = async (password) => {
   const hashedPassword = await bcrypt.hash(password, 10);
   return hashedPassword;
 };
-
 exports.createCustomer = async (req, res) => {
   try {
     //console.log(req.body);
@@ -44,3 +43,4 @@ exports.getCustomerById = async (req, res) => {
     res.status(500).json({ message: 'Internal Server Error' });
   }
 };
+
