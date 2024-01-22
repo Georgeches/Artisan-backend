@@ -12,9 +12,9 @@ exports.createCustomer = async (req, res) => {
     const { name, email, password } = req.body;
     const hashedPassword = await hashPassword(password);
       
-   const artisan = new Customer({ name, email, password:hashedPassword });
-    await artisan.save();
-    res.status(201).json(artisan);
+   const customer = new Customer({ name, email, password:hashedPassword });
+    await customer.save();
+    res.status(201).json(customer);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal Server Error' });
