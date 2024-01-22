@@ -17,18 +17,22 @@ const hashPassword = async (password) => {
 
 exports.createArtisan = async (req, res) => {
   try {
-    //console.log(req.body);
     const { name, email, password } = req.body;
+    if (!password) {
+      return res.status(400).json({ message: 'Password is required' });
+    }
+
     const hashedPassword = await hashPassword(password);
-      
-   const artisan = new Artisan({ name, email, password:hashedPassword });
+
+    const artisan = new Artisan({ name, email, password: hashedPassword });
     await artisan.save();
     res.status(201).json(artisan);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal Server Error' });
   }
-}
+};
+
 
 exports.getArtisanById = async (req, res) => {
   try {

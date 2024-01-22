@@ -1,0 +1,82 @@
+[
+  {
+    "name": "John Doe",
+    "email": "john.doe@example.com",
+    "phone": "123-456-7890",
+    "profilePic": "profile1.jpg",
+    "password": "password123",
+    "location": "City A"
+  },
+  {
+    "name": "Alice Smith",
+    "email": "alice.smith@example.com",
+    "phone": "987-654-3210",
+    "profilePic": "profile2.jpg",
+    "password": "securepass",
+    "location": "City B"
+  },
+  {
+    "name": "Bob Johnson",
+    "email": "bob.johnson@example.com",
+    "phone": "555-123-4567",
+    "profilePic": "profile3.jpg",
+    "password": "mysecretpassword",
+    "location": "City C"
+  },
+  {
+    "name": "Eva Brown",
+    "email": "eva.brown@example.com",
+    "phone": "777-888-9999",
+    "profilePic": "profile4.jpg",
+    "password": "evapass",
+    "location": "City D"
+  },
+  {
+    "name": "Charlie Wilson",
+    "email": "charlie.wilson@example.com",
+    "phone": "444-555-6666",
+    "profilePic": "profile5.jpg",
+    "password": "charliepass",
+    "location": "City E"
+  },
+  {
+    "name": "Grace Miller",
+    "email": "grace.miller@example.com",
+    "phone": "333-222-1111",
+    "profilePic": "profile6.jpg",
+    "password": "gracepass",
+    "location": "City F"
+  },
+  {
+    "name": "Daniel White",
+    "email": "daniel.white@example.com",
+    "phone": "111-222-3333",
+    "profilePic": "profile7.jpg",
+    "password": "danielpass",
+    "location": "City G"
+  },
+  {
+    "name": "Olivia Harris",
+    "email": "olivia.harris@example.com",
+    "phone": "666-777-8888",
+    "profilePic": "profile8.jpg",
+    "password": "oliviapass",
+    "location": "City H"
+  },
+  {
+    "name": "Samuel Turner",
+    "email": "samuel.turner@example.com",
+    "phone": "999-111-2222",
+    "profilePic": "profile9.jpg",
+    "password": "sampass",
+    "location": "City I"
+  },
+  {
+    "name": "Sophia Lee",
+    "email": "sophia.lee@example.com",
+    "phone": "222-333-4444",
+    "profilePic": "profile10.jpg",
+    "password": "sophiapass",
+    "location": "City J"
+  }
+]
