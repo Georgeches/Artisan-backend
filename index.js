@@ -6,6 +6,7 @@ const routes = require('./src/routes/routes');
 const requestLogger = require('./src/config/logger')
 const cors = require('cors');
 require('dotenv').config();
+const saveDummyProducts = require('./src/dummy');
 
 const app = express();
 
@@ -21,6 +22,8 @@ app.use(cookieParser());
 // Database Connection
 connectDB();
 
+saveDummyProducts();
+
 // Use Routes
 app.use('/', routes);
 
@@ -29,3 +32,5 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+
+
