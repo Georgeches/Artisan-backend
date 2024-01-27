@@ -22,7 +22,7 @@ app.use(cookieParser());
 // Database Connection
 connectDB();
 
-saveDummyProducts();
+// saveDummyProducts();
 
 // Use Routes
 app.use('/', routes);
