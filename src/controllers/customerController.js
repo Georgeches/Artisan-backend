@@ -53,6 +53,7 @@ exports.placeOrder = async (req, res) => {
       return res.status(401).json({ message: 'Customer not logged in' });
     }
 
+    //bado logic to handle oders
     
     const customerId = req.session.customer.id;
     const customerEmail = req.session.customer.email;
