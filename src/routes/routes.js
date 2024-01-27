@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/authController');
-const artisanController = require('../controllers/artisanController'); 
-const customerController = require('../controllers/customerController'); 
-const productController = require('../controllers/productController'); 
+const artisanController = require('../controllers/artisanController');
+const customerController = require('../controllers/customerController');
+const productController = require('../controllers/productController');
 
 // Authentication Routes
 router.post('/auth/artisan/login', authController.loginArtisan);
@@ -25,5 +25,8 @@ router.post('/customers', customerController.createCustomer);
 // Product Routes
 router.get('/products', productController.getAllProducts);
 router.post('/products', productController.createProduct);
+
+// New route for placing an order
+router.post('/order', customerController.placeOrder);
 
 module.exports = router;
