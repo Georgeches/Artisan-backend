@@ -7,19 +7,21 @@ const hashPassword = async (password) => {
 };
 exports.createCustomer = async (req, res) => {
   try {
-    //console.log(req.body);
     const { name, email, password } = req.body;
     const hashedPassword = await hashPassword(password);
-      
-   const artisan = new Customer({ name, email, password:hashedPassword });
-    await artisan.save();
-    res.status(201).json(artisan);
+
+    const customer = new Customer({ name, email, password: hashedPassword });
+    await customer.save();
+
+   
+    req.session.customer = { id: customer._id, email: customer.email };
+
+    res.status(201).json(customer);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal Server Error' });
   }
-}
-
+};
 
 exports.getAllCustomers = async (req, res) => {
   try {
@@ -43,4 +45,5 @@ exports.getCustomerById = async (req, res) => {
     res.status(500).json({ message: 'Internal Server Error' });
   }
 };
+
 

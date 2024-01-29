@@ -1,8 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/authController');
-const artisanController = require('../controllers/artisanController'); 
-const customerController = require('../controllers/customerController'); 
+const artisanController = require('../controllers/artisanController');
+const customerController = require('../controllers/customerController');
+const productController = require('../controllers/productController');
+const odersController = require('../controllers/odersController')
+
 // Authentication Routes
 router.post('/auth/artisan/login', authController.loginArtisan);
 router.post('/auth/customer/login', authController.loginCustomer);
@@ -20,5 +23,12 @@ router.get('/customers', customerController.getAllCustomers);
 router.get('/customers/:id', customerController.getCustomerById);
 router.post('/customers', customerController.createCustomer);
 
+// Product Routes
+router.get('/products', productController.getAllProducts);
+router.get('/products/:id', productController.getSingleProduct);
+router.post('/products', productController.createProduct);
+
+// order route
+router.post('/order', odersController.placeOrder);
 
 module.exports = router;
