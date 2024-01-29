@@ -5,7 +5,6 @@ const customerSchema = new mongoose.Schema({
   email: { type: String, unique: true, required: true },
   password: { type: String, required: true },
   address: String,
-  cart: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
   phone: String,
   country: String,
 },{timestamps:true});

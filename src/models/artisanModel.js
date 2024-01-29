@@ -10,7 +10,8 @@ const artisanSchema = new mongoose.Schema({
   town: String,          
   county: String,        
   profilepic: String,    
-  coverphoto: String,    
+  coverphoto: String,
+  about: { type: String, maxlength: 5000 },
   products: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
   orders: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Order' }],
 },{timestamps:true});
