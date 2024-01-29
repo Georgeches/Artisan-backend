@@ -24,6 +24,7 @@ router.post('/customers', customerController.createCustomer);
 
 // Product Routes
 router.get('/products', productController.getAllProducts);
+router.get('/products/:id', productController.getSingleProduct);
 router.post('/products', productController.createProduct);
 
 // New route for placing an order
