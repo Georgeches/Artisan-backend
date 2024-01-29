@@ -27,7 +27,7 @@ connectDB();
 // saveDummyProducts();
 
 app.use(session({
-  secret: process.env.SESSION_SECRET,
+  secret: process.env.SESSION_SECRET || "5e282b23cfb271873a242bade5359389",
   resave: false,
   saveUninitialized: true,
   store: MongoStore.create({
