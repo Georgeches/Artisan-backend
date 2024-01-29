@@ -7,20 +7,24 @@ exports.createOrder = async (req, res) => {
 
     const products = await Promise.all(items.map(async item => {
       const product = await Product.findById(item.product_id);
-      return { product_id: product._id, quantity: item.quantity, price: product.price };
+      return {
+        product_id: product._id,
+        artisan_id: product.artisan, 
+        quantity: item.quantity,
+        price: product.price
+      };
     }));
-
 
     const amount = products.reduce((total, product) => total + (product.price * product.quantity), 0);
 
     const order = new Orders({
-      order_number:()=>`ORD-${Date.now()}-${Math.floor(Math.random() * 10000)}`, 
-      customer_id: req.session.customer.id, 
+      order_number: `ORD-${Date.now()}-${Math.floor(Math.random() * 10000)}`,
+      customer_id: req.session.customer.id,
       items: products,
-      status: 'Pending', 
-      payment_status: false, 
+      status: 'Pending',
+      payment_status: false,
       shipping_fee: shipping_fee,
-      amount: amount.toString(), 
+      amount: amount.toString(),
     });
 
     await order.save();
@@ -31,8 +35,3 @@ exports.createOrder = async (req, res) => {
     res.status(500).json({ message: 'Internal Server Error' });
   }
 };
-
-
-// function generateOrderNumber() {
-//   return ;
-// }
