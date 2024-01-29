@@ -9,7 +9,7 @@ exports.createOrder = async (req, res) => {
       const product = await Product.findById(item.product_id);
       return {
         product_id: product._id,
-        artisan_id: product.artisan, 
+        artisanId: product.artisanId,  
         quantity: item.quantity,
         price: product.price
       };
