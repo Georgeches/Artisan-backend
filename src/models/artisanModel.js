@@ -13,7 +13,7 @@ const artisanSchema = new mongoose.Schema({
   coverphoto: String,    
   products: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
   orders: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Order' }],
-});
+},{timestamps:true});
 
 const Artisan = mongoose.model('Artisan', artisanSchema);
 
