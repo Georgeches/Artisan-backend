@@ -47,21 +47,4 @@ exports.getCustomerById = async (req, res) => {
   }
 };
 
-exports.placeOrder = async (req, res) => {
-  try {
-    if (!req.session.customer) {
-      return res.status(401).json({ message: 'Customer not logged in' });
-    }
 
-    //bado logic to handle oders
-    
-    const customerId = req.session.customer.id;
-    const customerEmail = req.session.customer.email;
-
-
-    res.status(200).json({ message: 'Order placed successfully' });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Internal Server Error' });
-  }
-};

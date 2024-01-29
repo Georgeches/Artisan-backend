@@ -4,6 +4,7 @@ const authController = require('../controllers/authController');
 const artisanController = require('../controllers/artisanController');
 const customerController = require('../controllers/customerController');
 const productController = require('../controllers/productController');
+const odersController = require('../controllers/odersController')
 
 // Authentication Routes
 router.post('/auth/artisan/login', authController.loginArtisan);
@@ -28,6 +29,6 @@ router.get('/products/:id', productController.getSingleProduct);
 router.post('/products', productController.createProduct);
 
 // order route
-router.post('/order', customerController.placeOrder);
+router.post('/order', odersController.placeOrder);
 
 module.exports = router;

@@ -1,35 +1,63 @@
-const Orders = require('../models/orderModel');
-const Product = require('../models/productModel');
+const Orders = require('../models/ordersModel');
+const Products = require('../models/productsModel');
+const Artisan = require('../models/artisanModel');
 
-exports.createOrder = async (req, res) => {
+exports.placeOrder = async (req, res) => {
   try {
-    const { items, shipping_fee } = req.body;
+    if (!req.session.customer) {
+      return res.status(401).json({ message: 'Customer not logged in' });
+    }
 
-    const products = await Promise.all(items.map(async item => {
-      const product = await Product.findById(item.product_id);
+    const customerId = req.session.customer.id;
+
+    const orderItems = req.body.items;
+
+    const productsByArtisan = await Promise.all(orderItems.map(async (item) => {
+      const product = await Products.findById(item.product_id);
+      if (!product) {
+        return res.status(404).json({ message: `Product with ID ${item.product_id} not found` });
+      }
       return {
         product_id: product._id,
-        artisanId: product.artisanId,  
+        artisan_id: product.artisanId,
         quantity: item.quantity,
-        price: product.price
+        price: product.price, 
       };
     }));
 
-    const amount = products.reduce((total, product) => total + (product.price * product.quantity), 0);
-
-    const order = new Orders({
-      order_number: `ORD-${Date.now()}-${Math.floor(Math.random() * 10000)}`,
-      customer_id: req.session.customer.id,
-      items: products,
-      status: 'Pending',
-      payment_status: false,
-      shipping_fee: shipping_fee,
-      amount: amount.toString(),
+    // order amount for each artisan
+    const orders = {};
+    productsByArtisan.forEach((item) => {
+      if (!orders[item.artisan_id]) {
+        orders[item.artisan_id] = {
+          items: [],
+          amount: 0,
+        };
+      }
+      orders[item.artisan_id].items.push({ product_id: item.product_id, quantity: item.quantity });
+      orders[item.artisan_id].amount += item.quantity * item.price;
     });
 
-    await order.save();
+    //save
+    const savedOrders = await Promise.all(Object.keys(orders).map(async (artisanId) => {
+      const order = new Orders({
+        order_number: `ORD-${Date.now()}-${Math.floor(Math.random() * 10000)}`,
+        customer_id: customerId,
+        items: orders[artisanId].items,
+        status: 'Pending',
+        payment_status: false,
+        shipping_fee: req.body.shipping_fee || '0', 
+        amount: orders[artisanId].amount.toString(),
+      });
+      await order.save();
 
-    res.status(201).json(order);
+      
+      await Artisan.findByIdAndUpdate(artisanId, { $push: { orders: order._id } });
+
+      return order;
+    }));
+
+    res.status(200).json({ message: 'Orders placed successfully', orders: savedOrders });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal Server Error' });
