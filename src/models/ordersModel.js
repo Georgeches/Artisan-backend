@@ -1,15 +1,15 @@
-const  mongoose = require("mongoose")
+const mongoose = require("mongoose")
 
-const oderSchema = new mongoose.Schema({
-    oder_number: String,
-    customer_id: {type: String, ref: 'Customer'},
-    items: [String],
-    status: String,
-    payment_status: Boolean,
-    shipping_fee: String,
-    amount: String
-},{timestamps:true})
+const orderSchema = new mongoose.Schema({
+  order_number: String,
+  customer_id: { type: String, ref: 'Customer' },
+  items: [{ product_id: { type: String, ref: 'Product' }, quantity: Number }],
+  status: String,
+  payment_status: Boolean,
+  shipping_fee: String,
+  amount: String
+}, { timestamps: true })
 
-const Oders = mongoose.Model('Oders',oderSchema)
+const Orders = mongoose.model('Orders', orderSchema)
 
-module.exports = Oders
+module.exports = Orders
