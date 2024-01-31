@@ -4,6 +4,9 @@ const path = require('path');
 const fs = require('fs');
 const multer=require('multer')
 const storage = multer.memoryStorage(); // Store files in memory as buffers
+
+
+
 const fileFilter = (req, file, cb) => {
   const allowedFileTypes = /jpeg|jpg|png/;
   const extname = allowedFileTypes.test(path.extname(file.originalname).toLowerCase());

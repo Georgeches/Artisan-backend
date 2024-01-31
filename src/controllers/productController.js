@@ -1,4 +1,34 @@
+const{S3Client,PutObjectCommand} =require("@aws-sdk/client-s3")
 const Products = require('../models/productsModel');
+const multer = require('multer');
+
+const bucketName=process.env.BUCKET_NAME
+const bucketRegion=process.env.BUCKET_REGION
+const accessKey=process.env.ACCESS_KEY
+const secretAccessKey=process.env.SECRET_ACCESS_KEY
+
+
+
+async function uploadToS3(path, originalFilename, mimetype) {
+  const client=new S3Client({
+    credentials:{
+        accessKeyId:accessKey,
+        secretAccessKey:secretAccessKey
+    },
+    region:bucketRegion
+  })
+  const parts = originalFilename.split('.');
+  const ext = parts[parts.length - 1];
+  const newFilename = Date.now() + '.' + ext;
+  await client.send(new PutObjectCommand({
+    Bucket: bucketName,
+    Body: fs.readFileSync(path),
+    Key: newFilename,
+    ContentType: mimetype,
+    //ACL: 'public-read',
+  }));
+  return `https://${bucketName}.s3.amazonaws.com/${newFilename}`;
+}
 
 exports.getAllProducts = async (req, res) => {
   try {
@@ -10,22 +40,28 @@ exports.getAllProducts = async (req, res) => {
   }
 };
 
-exports.createProduct = async (req, res) => {
+const upload = multer();
+exports.createProduct =upload.array("photos",8), async (req, res) => {
   try {
-    const { artisnaId, displayPic, name, price, description, quantity, otherPics } = req.body;
+    const { artisnaId,name, price, description, quantity } = req.body;
 
-    // Assuming displayPic and otherPics are base64-encoded strings
-    const displayPicBuffer = Buffer.from(displayPic, 'base64');
-    const otherPicsBuffers = otherPics.map((pic) => Buffer.from(pic, 'base64'));
+    const otherPictures = []
+
+    for (let i = 0; i < req.files.length; i++) {
+      const {path,originalname,mimetype} = req.files[i];
+      const url = await uploadToS3(path, originalname, mimetype);
+      otherPictures.push(url);
+    }
+    res.json(otherPictures);
 
     const product = new Products({
       artisnaId,
-      displayPic: displayPicBuffer,
+      displayPic: otherPictures[0],
       name,
       price,
       description,
       quantity,
-      otherPics: otherPicsBuffers,
+      otherPics: otherPictures,
     });
 
     await product.save();
