@@ -7,7 +7,9 @@ const bucketRegion=process.env.BUCKET_REGION
 const accessKey=process.env.ACCESS_KEY
 const secretAccessKey=process.env.SECRET_ACCESS_KEY
 
-
+const upload = multer({
+  storage: multer.memoryStorage(),
+});
 
 async function uploadToS3(path, originalFilename, mimetype) {
   const client=new S3Client({
@@ -40,7 +42,6 @@ exports.getAllProducts = async (req, res) => {
   }
 };
 
-const upload = multer();
 exports.createProduct =upload.array("photos",8), async (req, res) => {
   try {
     const { artisnaId,name, price, description, quantity } = req.body;
