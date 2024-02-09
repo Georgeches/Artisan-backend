@@ -63,3 +63,21 @@ exports.placeOrder = async (req, res) => {
     res.status(500).json({ message: 'Internal Server Error' });
   }
 };
+exports.getMyOrders = async (req, res) => {
+  try {
+    
+    if (!req.session.customer) {
+      return res.status(401).json({ message: 'Customer not logged in' });
+    }
+
+    const customerId = req.session.customer.id;
+
+  
+    const myOrders = await Orders.find({ customer_id: customerId });
+
+    res.status(200).json({ message: 'Orders retrieved successfully', orders: myOrders });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
