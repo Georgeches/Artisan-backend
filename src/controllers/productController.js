@@ -35,6 +35,9 @@ async function uploadToS3(path, originalFilename, mimetype) {
 exports.getAllProducts = async (req, res) => {
   try {
     const products = await Products.find();
+
+    if(!products) res.status(404).json({message: "Error occured while fetching products"})
+
     res.status(200).json(products);
   } catch (error) {
     console.error(error);
@@ -42,18 +45,17 @@ exports.getAllProducts = async (req, res) => {
   }
 };
 
-exports.createProduct =upload.array("photos",8), async (req, res) => {
+exports.createProduct = upload.array("photos", 8), async (req, res) => {
   try {
-    const { artisnaId,name, price, description, quantity } = req.body;
+    const { artisnaId, name, price, description, quantity } = req.body;
 
-    const otherPictures = []
-
-    for (let i = 0; i < req.files.length; i++) {
-      const {path,originalname,mimetype} = req.files[i];
+    const uploadPromises = req.files.map(async (file) => {
+      const { path, originalname, mimetype } = file;
       const url = await uploadToS3(path, originalname, mimetype);
-      otherPictures.push(url);
-    }
-    res.json(otherPictures);
+      return url;
+    });
+
+    const otherPictures = await Promise.all(uploadPromises);
 
     const product = new Products({
       artisnaId,
@@ -88,3 +90,25 @@ exports.getSingleProduct = async (req, res) => {
     res.status(500).json({ message: 'Internal Server Error' });
   }
 };
+
+exports.UpdateProduct = async(req,res) =>{
+
+}
+
+exports.deleteProduct = async (req, res) => {
+  try {
+    
+    const productId = req.params.id
+
+    const product = await Products.findById(productId)
+
+    if(!product) return res.status(404).json({message: "Product not found"})
+
+    product.remove()
+
+    res.status(200).json({message: "Product Deleted"})
+
+  } catch (error) {
+    res.status(500).json({message: "Internal serve error"})
+  }
+}

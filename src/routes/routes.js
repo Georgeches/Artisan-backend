@@ -31,5 +31,7 @@ router.post('/products', productController.createProduct);
 // order route
 router.post('/order', odersController.placeOrder);
 router.get('/myorders', odersController.getMyOrders);
+router.patch('/myorders/:id', odersController.updateMyOrders);
+router.delete('/myorders/:id', odersController.deleteOrder);
 
 module.exports = router;
