@@ -1,26 +1,9 @@
 const bcrypt = require('bcrypt');
 const Artisan = require('../models/artisanModel');
-const path = require('path');
+const multer = require('multer');
 const fs = require('fs');
-const multer=require('multer')
-const storage = multer.memoryStorage(); // Store files in memory as buffers
 
-
-
-const fileFilter = (req, file, cb) => {
-  const allowedFileTypes = /jpeg|jpg|png/;
-  const extname = allowedFileTypes.test(path.extname(file.originalname).toLowerCase());
-  const mimetype = allowedFileTypes.test(file.mimetype);
-  if (extname && mimetype) {
-    return cb(null, true);
-  } else {
-    cb('Error: Images only (jpeg, jpg, png)!');
-  }
-};
-const upload = multer({
-  storage: storage,
-  fileFilter: fileFilter,
-});
+const upload = multer();
 
 exports.getAllArtisans = async (req, res) => {
   try {
@@ -31,13 +14,19 @@ exports.getAllArtisans = async (req, res) => {
     res.status(500).json({ message: 'Internal Server Error' });
   }
 };
+
 const hashPassword = async (password) => {
   const hashedPassword = await bcrypt.hash(password, 10);
   return hashedPassword;
 };
 
-exports.createArtisan = async (req, res) => {
+exports.createArtisan = upload.single('photo'), async (req, res) => {
   try {
+
+    if (!req.file) {
+      return res.status(400).json({ message: 'No file uploaded!' });
+    }
+
     const { name, email, password } = req.body;
     if (!password) {
       return res.status(400).json({ message: 'Password is required' });
@@ -45,7 +34,13 @@ exports.createArtisan = async (req, res) => {
 
     const hashedPassword = await hashPassword(password);
 
-    const artisan = new Artisan({ name, email, password: hashedPassword });
+    const artisan = new Artisan({
+      name,
+      email,
+      password: hashedPassword,
+      profilePic: req.file.buffer.toString('base64'),
+    });
+
     await artisan.save();
     res.status(201).json(artisan);
   } catch (error) {
@@ -53,7 +48,6 @@ exports.createArtisan = async (req, res) => {
     res.status(500).json({ message: 'Internal Server Error' });
   }
 };
-
 
 exports.getArtisanById = async (req, res) => {
   try {
@@ -68,30 +62,20 @@ exports.getArtisanById = async (req, res) => {
   }
 };
 
-exports.uploadProfilePic = upload.single('photo'), async (req, res) => {
-  try {
-    if (!req.file) {
-      return res.status(400).json({ message: 'No file uploaded!' });
-    }
+// exports.uploadProfilePic =  async (req, res) => {
+//   try {
+    
 
-    const { name, email, password } = req.body;
-    const hashedPassword = await hashPassword(password);
+//     const { name, email, password } = req.body;
+//     const hashedPassword = await hashPassword(password);
 
-    // Converting the buffer to base64
-    const base64Image = req.file.buffer.toString('base64');
+//     // Saving user info and uploaded photo
+ 
+//     await artisan.save();
 
-    // Saving user info and uploaded photo
-    const artisan = new Artisan({
-      name,
-      email,
-      password: hashedPassword,
-      profilePic: base64Image,
-    });
-    await artisan.save();
-
-    res.status(201).json({ message: 'File uploaded successfully', artisan });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Internal Server Error' });
-  }
-};
+//     res.status(201).json({ message: 'File uploaded successfully', artisan });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: 'Internal Server Error' });
+//   }
+// };

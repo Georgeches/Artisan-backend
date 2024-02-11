@@ -45,18 +45,17 @@ exports.getAllProducts = async (req, res) => {
   }
 };
 
-exports.createProduct =upload.array("photos",8), async (req, res) => {
+exports.createProduct = upload.array("photos", 8), async (req, res) => {
   try {
-    const { artisnaId,name, price, description, quantity } = req.body;
+    const { artisnaId, name, price, description, quantity } = req.body;
 
-    const otherPictures = []
-
-    for (let i = 0; i < req.files.length; i++) {
-      const {path,originalname,mimetype} = req.files[i];
+    const uploadPromises = req.files.map(async (file) => {
+      const { path, originalname, mimetype } = file;
       const url = await uploadToS3(path, originalname, mimetype);
-      otherPictures.push(url);
-    }
-    res.json(otherPictures);
+      return url;
+    });
+
+    const otherPictures = await Promise.all(uploadPromises);
 
     const product = new Products({
       artisnaId,
