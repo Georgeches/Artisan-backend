@@ -66,9 +66,8 @@ exports.placeOrder = async (req, res) => {
 exports.getMyOrders = async (req, res) => {
   try {
     
-    if (!req.session.customer) {
-      return res.status(401).json({ message: 'Customer not logged in' });
-    }
+    if (!req.session.customer)  return res.status(401).json({ message: 'Customer not logged in' });
+    
 
     const customerId = req.session.customer.id;
 
@@ -81,3 +80,31 @@ exports.getMyOrders = async (req, res) => {
     res.status(500).json({ message: 'Internal Server Error' });
   }
 };
+
+exports.updateMyOrders = async (req, res) => {
+  try {
+    if (!req.session.customer)  return res.status(401).json({ message: 'Customer not logged in' }); 
+    
+    const orderId = req.params.id;
+    // const customerId = req.session.customer.id;
+
+    
+  const order = await Orders.findOne({ _id: orderId /*customer_id: customerId */});
+
+    if (!order)  return res.status(404).json({ message: 'Order not found' });
+       
+    const { status } = req.body;
+
+    if (status)  order.status = status;
+    
+    await order.save();
+
+    res.status(200).json({ message: 'Order updated successfully', order });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
+
+
+
