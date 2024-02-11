@@ -35,6 +35,9 @@ async function uploadToS3(path, originalFilename, mimetype) {
 exports.getAllProducts = async (req, res) => {
   try {
     const products = await Products.find();
+
+    if(!products) res.status(404).json({message: "Error occured while fetching products"})
+
     res.status(200).json(products);
   } catch (error) {
     console.error(error);
@@ -90,7 +93,7 @@ exports.getSingleProduct = async (req, res) => {
 };
 
 exports.UpdateProduct = async(req,res) =>{
-  
+
 }
 
 exports.deleteProduct = async (req, res) => {
