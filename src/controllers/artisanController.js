@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt');
 const Artisan = require('../models/artisanModel');
 const multer = require('multer');
-const fs = require('fs');
+// const fs = require('fs');
 
 const upload = multer();
 
@@ -28,6 +28,7 @@ exports.createArtisan = upload.single('photo'), async (req, res) => {
     }
 
     const { name, email, password } = req.body;
+
     if (!password) {
       return res.status(400).json({ message: 'Password is required' });
     }
@@ -42,6 +43,7 @@ exports.createArtisan = upload.single('photo'), async (req, res) => {
     });
 
     await artisan.save();
+    
     res.status(201).json(artisan);
   } catch (error) {
     console.error(error);
