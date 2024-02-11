@@ -1,6 +1,7 @@
 const{S3Client,PutObjectCommand} =require("@aws-sdk/client-s3")
 const Products = require('../models/productsModel');
 const multer = require('multer');
+const fs = require('fs')
 
 const bucketName=process.env.BUCKET_NAME
 const bucketRegion=process.env.BUCKET_REGION
