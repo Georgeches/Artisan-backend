@@ -106,5 +106,27 @@ exports.updateMyOrders = async (req, res) => {
   }
 };
 
+exports.deleteOrder = async (req, res) => {
+  try {
+    
+    if (!req.session.customer)  return res.status(401).json({ message: 'Customer not logged in' });
+    
+
+    const orderId = req.params.id;
+
+  
+    const order = await Orders.findOne({ _id: orderId});
+
+    
+    if (!order)  return res.status(404).json({ message: 'Order not found' });
+    
+    await order.remove();
+    
+    res.status(200).json({ message: 'Order deleted successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
 
 

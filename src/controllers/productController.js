@@ -88,3 +88,25 @@ exports.getSingleProduct = async (req, res) => {
     res.status(500).json({ message: 'Internal Server Error' });
   }
 };
+
+exports.UpdateProduct = async(req,res) =>{
+  
+}
+
+exports.deleteProduct = async (req, res) => {
+  try {
+    
+    const productId = req.params.id
+
+    const product = await Products.findById(productId)
+
+    if(!product) return res.status(404).json({message: "Product not found"})
+
+    product.remove()
+
+    res.status(200).json({message: "Product Deleted"})
+
+  } catch (error) {
+    res.status(500).json({message: "Internal serve error"})
+  }
+}
