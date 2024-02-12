@@ -27,6 +27,8 @@ router.post('/customers', customerController.createCustomer);
 router.get('/products', productController.getAllProducts);
 router.get('/products/:id', productController.getSingleProduct);
 router.post('/products', productController.createProduct);
+router.patch('/products', productController.UpdateProduct)
+router.delete('/products/:id', productController.deleteProduct);
 
 // order route
 router.post('/order', odersController.placeOrder);
