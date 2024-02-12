@@ -92,9 +92,45 @@ exports.getSingleProduct = async (req, res) => {
   }
 };
 
-exports.UpdateProduct = async(req,res) =>{
+exports.UpdateProduct = async (req, res) => {
+  try {
+    const productId = req.params.id;
+    const { artisanId, name, price, description, quantity } = req.body;
 
-}
+    let product = await Products.findById(productId);
+
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+
+    product.artisanId = artisanId;
+    product.name = name;
+    product.price = price;
+    product.description = description;
+    product.quantity = quantity;
+
+    if (req.files && req.files.length > 0) {
+      const uploadPromises = req.files.map(async (file) => {
+        const { path, originalname, mimetype } = file;
+        const url = await uploadToS3(path, originalname, mimetype);
+        return url;
+      });
+
+      const otherPictures = await Promise.all(uploadPromises);
+
+      product.displayPic = otherPictures[0];
+      product.otherPics = otherPictures;
+    }
+
+    product = await product.save();
+
+    res.status(200).json(product);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
+
 
 exports.deleteProduct = async (req, res) => {
   try {
