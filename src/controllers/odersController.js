@@ -4,9 +4,9 @@ const Artisan = require('../models/artisanModel');
 
 exports.placeOrder = async (req, res) => {
   try {
-    if (!req.session.customer) {
-      return res.status(401).json({ message: 'Customer not logged in' });
-    }
+    // if (!req.session.customer) {
+    //   return res.status(401).json({ message: 'Customer not logged in' });
+    // }
 
     const customerId = req.session.customer.id;
 
