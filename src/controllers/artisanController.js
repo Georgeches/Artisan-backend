@@ -53,6 +53,8 @@ const hashPassword = async (password) => {
 };
 
 exports.createArtisan = upload.single('image'), async (req, res) => {
+
+exports.createArtisan =  async (req, res) => {
   try {
 
     if (!req.file) {
@@ -81,6 +83,13 @@ exports.createArtisan = upload.single('image'), async (req, res) => {
         location,
         county,
       });
+    const artisan = new Artisan({
+      name,
+      email,
+      password: hashedPassword,
+      // profilePic: req.file.buffer.toString('base64'),
+    });
+
 
       await artisan.save();
 
