@@ -14,6 +14,7 @@ const artisanSchema = new mongoose.Schema({
   about: { type: String, maxlength: 5000 },
   products: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
   orders: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Order' }],
+  customers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Customer' }],
 },{timestamps:true});
 
 const Artisan = mongoose.model('Artisan', artisanSchema);

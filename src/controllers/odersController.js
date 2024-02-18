@@ -1,72 +1,79 @@
 const Orders = require('../models/ordersModel');
 const Products = require('../models/productsModel');
 const Artisan = require('../models/artisanModel');
+const Customer = require('../models/customerModel')
 
 exports.placeOrder = async (req, res) => {
   try {
-    // if (!req.session.customer) {
-    //   return res.status(401).json({ message: 'Customer not logged in' });
-    // }
+    // const userDetails = req.body.customer;
+    const cartItems = req.body.items;
+    const orderReq = req.body
 
-    const customerId = req.session.customer.id;
+ 
+    // const customerId = req.body.customer_id;
 
-    const orderItems = req.body.items;
+    // const orderAmount = cartItems.reduce((total, item) => total + item.total, 0);
 
-    const productsByArtisan = await Promise.all(orderItems.map(async (item) => {
-      const product = await Products.findById(item.product_id);
-      if (!product) {
-        return res.status(404).json({ message: `Product with ID ${item.product_id} not found` });
+    const customer =  new Customer(orderReq.customer)
+
+    customer.save()
+    // .then(
+    //   ()=> id = customer._id
+    // )
+    const customerId = customer._id
+
+    console.log(customerId)
+
+
+
+    const order = 
+      {
+        order_number: req.order_number,
+        customer_id: customerId,
+        // items: [{ product_id: item.product_id, quantity: item.quantity }],
+        items: cartItems.map(item => item._id),
+        status: 'Pending',
+        payment_status: orderReq.payment_status ,
+        shipping_fee: orderReq.shipping_fee,
+        amount: orderReq.amount
       }
-      return {
-        product_id: product._id,
-        artisan_id: product.artisanId,
-        quantity: item.quantity,
-        price: product.price, 
-      };
-    }));
 
-    // order amount for each artisan
-    const orders = {};
-    productsByArtisan.forEach((item) => {
-      if (!orders[item.artisan_id]) {
-        orders[item.artisan_id] = {
-          items: [],
-          amount: 0,
-        };
+    cartItems.forEach(item => {
+      let artisan = Artisan.findById(item.artisanId)
+
+      if(artisan.customers){
+        console.log(artisan.customers)
+        if(artisan.customers?.find(customer=>customer._id===customerId) === undefined){
+          artisan.customers?.unshift(customerId)
+          artisan.save()
+        }
       }
-      orders[item.artisan_id].items.push({ product_id: item.product_id, quantity: item.quantity });
-      orders[item.artisan_id].amount += item.quantity * item.price;
     });
 
-    //save
-    const savedOrders = await Promise.all(Object.keys(orders).map(async (artisanId) => {
-      const order = new Orders({
-        order_number: `ORD-${Date.now()}-${Math.floor(Math.random() * 10000)}`,
-        customer_id: customerId,
-        items: orders[artisanId].items,
-        status: 'Pending',
-        payment_status: false,
-        shipping_fee: req.body.shipping_fee || '0', 
-        amount: orders[artisanId].amount.toString(),
-      });
-      await order.save();
+    
 
-      
-      await Artisan.findByIdAndUpdate(artisanId, { $push: { orders: order._id } });
+    // const savedOrders = await Promise.all(orders.map(async (order) => {
+    //   const savedOrder = new Orders(order);
+    //   await savedOrder.save();
+    //   await Artisan.findByIdAndUpdate(order.artisan_id, { $push: { orders: savedOrder._id } });
+    //   return savedOrder;
+    // }));
 
-      return order;
-    }));
+    const newOder = new Orders(order)
+    newOder.save()
 
-    res.status(200).json({ message: 'Orders placed successfully', orders: savedOrders });
+
+    res.status(200).json({ message: 'Orders placed successfully'});
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal Server Error' });
   }
 };
+
 exports.getMyOrders = async (req, res) => {
   try {
     
-    if (!req.session.customer)  return res.status(401).json({ message: 'Customer not logged in' });
+    // if (!req.session.customer)  return res.status(401).json({ message: 'Customer not logged in' });
     
 
     const customerId = req.session.customer.id;
