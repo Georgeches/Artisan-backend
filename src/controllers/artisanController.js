@@ -1,41 +1,9 @@
 const bcrypt = require('bcrypt');
 const Artisan = require('../models/artisanModel');
 const multer = require('multer');
- const fs = require('fs');
-const{S3Client,PutObjectCommand} =require("@aws-sdk/client-s3")
-const { promisify } = require('util');
-const unlinkAsync = promisify(fs.unlink);
+// const fs = require('fs');
 
-const bucketName=process.env.BUCKET_NAME
-const bucketRegion=process.env.BUCKET_REGION
-const accessKey=process.env.ACCESS_KEY
-const secretAccessKey=process.env.SECRET_ACCESS_KEY
-
-const upload = multer({
-  storage: multer.memoryStorage(),
-});
-
-async function uploadToS3(path, originalFilename, mimetype) {
-  const client=new S3Client({
-    credentials:{
-        accessKeyId:accessKey,
-        secretAccessKey:secretAccessKey
-    },
-    region:bucketRegion
-  })
-  const parts = originalFilename.split('.');
-  const ext = parts[parts.length - 1];
-  const newFilename = Date.now() + '.' + ext;
-  const fileContent = await fs.readFile(path);
-  await client.send(new PutObjectCommand({
-    Bucket: bucketName,
-    Body: fileContent,
-    Key: newFilename,
-    ContentType: mimetype,
-    ACL: 'public-read',
-  }));
-  return `https://${bucketName}.s3.amazonaws.com/${newFilename}`;
-}
+const upload = multer();
 
 exports.getAllArtisans = async (req, res) => {
   try {
@@ -52,15 +20,12 @@ const hashPassword = async (password) => {
   return hashedPassword;
 };
 
-exports.createArtisan = upload.single('image'), async (req, res) => {
-
 exports.createArtisan =  async (req, res) => {
   try {
 
-    if (!req.file) {
-      return res.status(400).json({ message: 'No file uploaded!' });
-    }
-
+    // if (!req.file) {
+    //   return res.status(400).json({ message: 'No file uploaded!' });
+    // }
 
     const { password } = req.body;
 
@@ -69,19 +34,8 @@ exports.createArtisan =  async (req, res) => {
     }
     const artisanReq = req.body
 
+    const hashedPassword = await hashPassword(password);
 
-      const hashedPassword = await hashPassword(password);
-
-      const artisan = new Artisan({
-        name,
-        email,
-        password: hashedPassword,
-        profilePic: url,
-        phone,
-        town,
-        location,
-        county,
-      });
     const artisan = new Artisan({
       ...artisanReq,
       password: hashedPassword,
@@ -90,16 +44,42 @@ exports.createArtisan =  async (req, res) => {
     });
     console.log(artisanReq.profilePicture)
 
-
-      await artisan.save();
-
-      res.status(201).json(artisan);
-    } catch (uploadError) {
-      console.error('Error uploading to S3:', uploadError);
-      res.status(500).json({ message: 'Error uploading to S3' });
-    }
+    await artisan.save();
+    
+    res.status(201).json(artisan);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal Server Error' });
   }
 };
+
+exports.getArtisanById = async (req, res) => {
+  try {
+    const artisan = await Artisan.findById(req.params.id);
+    if (!artisan) {
+      return res.status(404).json({ message: 'Artisan not found' });
+    }
+    res.status(200).json(artisan);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
+
+// exports.uploadProfilePic =  async (req, res) => {
+//   try {
+    
+
+//     const { name, email, password } = req.body;
+//     const hashedPassword = await hashPassword(password);
+
+//     // Saving user info and uploaded photo
+ 
+//     await artisan.save();
+
+//     res.status(201).json({ message: 'File uploaded successfully', artisan });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: 'Internal Server Error' });
+//   }
+// };
