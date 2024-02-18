@@ -46,9 +46,9 @@ exports.getAllProducts = async (req, res) => {
   }
 };
 
-exports.createProduct = upload.array("photos", 8), async (req, res) => {
+exports.createProduct = upload.array("images", 8), async (req, res) => {
   try {
-    const { artisnaId, name, price, description, quantity } = req.body;
+    const { artisnaId, name, price, description, quantity,images,category } = req.body;
 
     const uploadPromises = req.files.map(async (file) => {
       const { path, originalname, mimetype } = file;
