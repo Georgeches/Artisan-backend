@@ -9,12 +9,18 @@ exports.placeOrder = async (req, res) => {
     const cartItems = req.body.items;
     const orderReq = req.body
 
+    let customer = {}
+
  
     // const customerId = req.body.customer_id;
 
     // const orderAmount = cartItems.reduce((total, item) => total + item.total, 0);
 
-    const customer =  new Customer(orderReq.customer)
+    const findCustomer = Customer.findOne(orderReq.email)
+    if(findCustomer) {
+      customer = {...findCustomer}
+    }
+     customer =  new Customer(orderReq.customer)
 
     customer.save()
     // .then(
@@ -22,7 +28,7 @@ exports.placeOrder = async (req, res) => {
     // )
     const customerId = customer._id
 
-    console.log(customerId)
+    
 
 
 
@@ -38,17 +44,21 @@ exports.placeOrder = async (req, res) => {
         amount: orderReq.amount
       }
 
-    cartItems.forEach(item => {
-      let artisan = Artisan.findById(item.artisanId)
+      
+    for (const item of cartItems) {
+      const artisan = await Artisan.findById(item.artisanId);
+      if (artisan && artisan.customers && !artisan.customers.includes(customerId)) {
+        artisan.customers.push(customerId);
+        await artisan.save();
 
-      if(artisan.customers){
-        console.log(artisan.customers)
-        if(artisan.customers?.find(customer=>customer._id===customerId) === undefined){
-          artisan.customers?.unshift(customerId)
-          artisan.save()
-        }
       }
-    });
+      console.log(cartItems.artisanId)
+    }
+    
+
+    // const artisan = Artisan.findOne(cartItems.artisanId)
+    // artisan.orders.push(order_number)
+    // artisan.save()
 
     
 
