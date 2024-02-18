@@ -20,12 +20,12 @@ const hashPassword = async (password) => {
   return hashedPassword;
 };
 
-exports.createArtisan = upload.single('photo'), async (req, res) => {
+exports.createArtisan =  async (req, res) => {
   try {
 
-    if (!req.file) {
-      return res.status(400).json({ message: 'No file uploaded!' });
-    }
+    // if (!req.file) {
+    //   return res.status(400).json({ message: 'No file uploaded!' });
+    // }
 
     const { name, email, password } = req.body;
 
@@ -39,7 +39,7 @@ exports.createArtisan = upload.single('photo'), async (req, res) => {
       name,
       email,
       password: hashedPassword,
-      profilePic: req.file.buffer.toString('base64'),
+      // profilePic: req.file.buffer.toString('base64'),
     });
 
     await artisan.save();
