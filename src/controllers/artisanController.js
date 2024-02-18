@@ -61,15 +61,14 @@ exports.createArtisan =  async (req, res) => {
       return res.status(400).json({ message: 'No file uploaded!' });
     }
 
-    const { path, originalname, mimetype } = req.file;
-    try {
-      const url = await uploadToS3(path, originalname, mimetype);
-      await unlinkAsync(path);
-      const { name, email, password, county, location, phone, town } = req.body;
 
-      if (!password) {
-        return res.status(400).json({ message: 'Password is required' });
-      }
+    const { password } = req.body;
+
+    if (!password) {
+      return res.status(400).json({ message: 'Password is required' });
+    }
+    const artisanReq = req.body
+
 
       const hashedPassword = await hashPassword(password);
 
@@ -84,11 +83,12 @@ exports.createArtisan =  async (req, res) => {
         county,
       });
     const artisan = new Artisan({
-      name,
-      email,
+      ...artisanReq,
       password: hashedPassword,
+      profilepic: artisanReq.profilePicture
       // profilePic: req.file.buffer.toString('base64'),
     });
+    console.log(artisanReq.profilePicture)
 
 
       await artisan.save();
