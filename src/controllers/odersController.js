@@ -66,13 +66,12 @@ exports.placeOrder = async (req, res) => {
     await customer.save();
 
     res.status(200).json({
-      message: 'Orders placed successfully',
       customer_id: customer._id,
       orders: customer.orders
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Internal Server Error' });
+    res.status(500).json({ message: 'Order not send. Please try again later...' });
   }
 };
 
