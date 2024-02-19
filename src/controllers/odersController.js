@@ -2,6 +2,12 @@ const Orders = require('../models/ordersModel');
 const Products = require('../models/productsModel');
 const Artisan = require('../models/artisanModel');
 const Customer = require('../models/customerModel')
+const bcrypt = require('bcrypt');
+
+const hashPassword = async (password) => {
+  const hashedPassword = await bcrypt.hash(password, 10);
+  return hashedPassword;
+};
 
 exports.placeOrder = async (req, res) => {
   try {
@@ -20,7 +26,9 @@ exports.placeOrder = async (req, res) => {
     if(findCustomer) {
       customer = {...findCustomer}
     }
-     customer =  new Customer(orderReq.customer)
+    let password = await hashPassword(orderReq.customer.password);
+    orderReq.password = password
+    customer =  new Customer(orderReq.customer)
 
     customer.save()
     // .then(
