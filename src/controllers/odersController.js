@@ -15,7 +15,7 @@ exports.placeOrder = async (req, res) => {
     const cartItems = req.body.items;
     const orderReq = req.body
 
-    let customer = await Customer.findOne({ email: orderReq.email });
+    let customer = await Customer.findOne({ email: orderReq.customer.email });
     if (!customer) {
       let password = await hashPassword(orderReq.customer.password);
       orderReq.customer.password = password;
@@ -24,7 +24,7 @@ exports.placeOrder = async (req, res) => {
     }
 
     const order = {
-      order_number: req.order_number,
+      order_number: orderReq.order_number,
       customer_id: customer._id,
       // items: [{ product_id: item.product_id, quantity: item.quantity }],
       items: cartItems.map(item => item._id),
