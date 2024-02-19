@@ -62,7 +62,7 @@ exports.placeOrder = async (req, res) => {
     const newOder = new Orders(order)
     newOder.save()
 
-    customer.orders.push(newOder._id);
+    customer.orders.push(newOder);
     await customer.save();
 
     res.status(200).json({
