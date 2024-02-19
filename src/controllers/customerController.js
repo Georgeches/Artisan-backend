@@ -8,6 +8,11 @@ const hashPassword = async (password) => {
 exports.createCustomer = async (req, res) => {
   try {
     const { name, email, password } = req.body;
+    const findCustomer = Customer.findOne(orderReq.email)
+    if(findCustomer) {
+      return res.json({ message: 'Email already exists' });
+    }
+
     const hashedPassword = await hashPassword(password);
 
     const customer = new Customer({ name, email, password: hashedPassword });

@@ -56,13 +56,13 @@ exports.loginCustomer = async (req, res) => {
     const customer = await Customer.findOne({ email });
 
     if (!customer) {
-      return res.status(401).json({ message: 'Invalid credentials' });
+      return res.status(401).json({ message: 'Email not found' });
     }
 
     const isPasswordValid = await bcrypt.compare(password, customer.password);
 
     if (!isPasswordValid) {
-      return res.status(401).json({ message: 'Invalid credentials' });
+      return res.status(401).json({ message: 'Password is incorrect' });
     }
 
     const token = generateToken(customer._id);
