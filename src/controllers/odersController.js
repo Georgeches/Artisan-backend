@@ -15,48 +15,30 @@ exports.placeOrder = async (req, res) => {
     const cartItems = req.body.items;
     const orderReq = req.body
 
-    let customer = {}
-
- 
-    // const customerId = req.body.customer_id;
-
-    // const orderAmount = cartItems.reduce((total, item) => total + item.total, 0);
-
-    const findCustomer = Customer.findOne(orderReq.email)
-    if(findCustomer) {
-      customer = {...findCustomer}
+    let customer = await Customer.findOne({ email: orderReq.email });
+    if (!customer) {
+      let password = await hashPassword(orderReq.customer.password);
+      orderReq.customer.password = password;
+      customer = new Customer(orderReq.customer);
+      await customer.save();
     }
-    let password = await hashPassword(orderReq.customer.password);
-    orderReq.password = password
-    customer =  new Customer(orderReq.customer)
 
-    customer.save()
-    // .then(
-    //   ()=> id = customer._id
-    // )
-    const customerId = customer._id
-
-    
-
-
-
-    const order = 
-      {
-        order_number: req.order_number,
-        customer_id: customerId,
-        // items: [{ product_id: item.product_id, quantity: item.quantity }],
-        items: cartItems.map(item => item._id),
-        status: 'Pending',
-        payment_status: orderReq.payment_status ,
-        shipping_fee: orderReq.shipping_fee,
-        amount: orderReq.amount
-      }
+    const order = {
+      order_number: req.order_number,
+      customer_id: customer._id,
+      // items: [{ product_id: item.product_id, quantity: item.quantity }],
+      items: cartItems.map(item => item._id),
+      status: 'Pending',
+      payment_status: orderReq.payment_status ,
+      shipping_fee: orderReq.shipping_fee,
+      amount: orderReq.amount
+    }
 
       
     for (const item of cartItems) {
       const artisan = await Artisan.findById(item.artisanId);
-      if (artisan && artisan.customers && !artisan.customers.includes(customerId)) {
-        artisan.customers.push(customerId);
+      if (artisan && artisan.customers && !artisan.customers.includes(customer._id)) {
+        artisan.customers.push(customer._id);
         await artisan.save();
 
       }
@@ -80,8 +62,14 @@ exports.placeOrder = async (req, res) => {
     const newOder = new Orders(order)
     newOder.save()
 
+    customer.orders.push(newOder._id);
+    await customer.save();
 
-    res.status(200).json({ message: 'Orders placed successfully'});
+    res.status(200).json({
+      message: 'Orders placed successfully',
+      customer_id: customer._id,
+      orders: customer.orders
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal Server Error' });
