@@ -32,7 +32,7 @@ router.delete('/products/:id', productController.deleteProduct);
 
 // order route
 router.post('/order', odersController.placeOrder);
-router.get('/myorders', odersController.getMyOrders);
+router.get('/orders', odersController.getAllOrders);
 router.patch('/myorders/:id', odersController.updateMyOrders);
 router.delete('/myorders/:id', odersController.deleteOrder);
 
