@@ -9,6 +9,19 @@ const hashPassword = async (password) => {
   return hashedPassword;
 };
 
+exports.getAllOrders = async (req, res) => {
+  try {
+    const orders = await Orders.find();
+
+    if(!orders) res.status(404).json({message: "Error occured while fetching products"})
+
+    res.status(200).json(orders);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
+
 exports.placeOrder = async (req, res) => {
   try {
     // const userDetails = req.body.customer;
